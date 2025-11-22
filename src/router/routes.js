@@ -3,16 +3,32 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: '', component: () => import('pages/IndexPage.vue') }
+    ]
+  },
+  {
+    path: '/en',
+    component: () => import('layouts/PublicLayout.vue'),
+    children: [
       {
-        path: 'en/for-sale',
+        path: 'for-sale',
         name: 'rForSaleSearch',
-        component: () => import('components/SearchView.vue')
+        component: () => import('pages/SearchView.vue')
       },
       {
-        path: 'en/property/:id',
-        name: 'rPropertyDetail',
-        component: () => import('components/ListingView.vue')
+        path: 'for-sale/:listingSlug',
+        name: 'rForSaleListing',
+        component: () => import('pages/ListingView.vue')
+      },
+      {
+        path: 'for-rent',
+        name: 'rForRentSearch',
+        component: () => import('pages/SearchView.vue')
+      },
+      {
+        path: 'for-rent/:listingSlug',
+        name: 'rForRentListing',
+        component: () => import('pages/ListingView.vue')
       }
     ]
   },

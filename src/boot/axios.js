@@ -9,3 +9,4 @@ export default boot(({ app }) => {
 })
 
 export { api }
+import 'bootstrap/dist/css/bootstrap.min.css'

@@ -20,13 +20,10 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios', 'localise',
-      
-      
-    ],
+    boot: ['axios', 'localise', 'sitedetails', 'google-maps'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: [
+    css: ['v-public.css',
       'app.scss'
     ],
 
@@ -72,9 +69,6 @@ module.exports = configure(function (/* ctx */) {
       // viteVuePluginOptions: {},
 
       vitePlugins: [
-        ['vite-plugin-checker', {
-          }
-        }, { server: false }]
       ]
     },
 

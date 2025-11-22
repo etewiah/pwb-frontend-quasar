@@ -1,4 +1,5 @@
 <template>
+  <q-page>
   <div class="q-ma-md">
     <div class="row">
       <div class="col-12">
@@ -6,6 +7,7 @@
       </div>
     </div>
   </div>
+  </q-page>
 </template>
 <script>
 import ViewContainer from "components/listings/ViewContainer.vue"
@@ -44,7 +46,7 @@ export default defineComponent({
     const listingData = ref(null)
 
     const fetchProperty = async (locale) => {
-      if (!locale) return
+      // if (!locale) return
       loading.value = true
       error.value = null
       try {

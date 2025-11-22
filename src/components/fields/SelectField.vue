@@ -28,14 +28,10 @@ export default {
     currentFieldValue: {
       handler(newValue, oldVal) {
         if (newValue) {
-          // Normalize currency values by stripping commas
-          // This allows matching with selectItems which have values without commas
-          if (this.isCurrencyField && typeof newValue === 'string') {
-            this.localFieldValue = newValue.replace(/,/g, '')
-          } else {
-            this.localFieldValue = newValue
-          }
+          this.localFieldValue = newValue
         } else {
+          // let defaultValue = this.fieldDetails.defaultValue
+          // this.selectItems.find(item => item.value === defaultValue)
           this.localFieldValue = this.fieldDetails.defaultValue
         }
         // if (["city", "maxPrice"].includes(this.fieldDetails.fieldName)) {
@@ -49,14 +45,6 @@ export default {
     },
   },
   computed: {
-    isCurrencyField() {
-      return [
-        "forRentPriceFrom",
-        "forRentPriceTill",
-        "forSalePriceFrom",
-        "forSalePriceTill",
-      ].includes(this.fieldDetails.fieldName)
-    },
     selectItems() {
       let rawVals = []
       let optionsType = "simple_list"
@@ -69,26 +57,26 @@ export default {
       let selectItems = [{ name: "", value: "" }]
       // let i18n = this.$i18n
       // let fieldName = this.fieldDetails.fieldName
-      
-      // Check if we have separate labels (e.g., for property types)
-      const hasLabels = this.fieldDetails.optionsLabels && this.fieldDetails.optionsLabels.length > 0
-      
-      rawVals.forEach((optionKey, index) => {
+      let isCurrency = false
+      if (
+        [
+          "forRentPriceFrom",
+          "forRentPriceTill",
+          "forSalePriceFrom",
+          "forSalePriceTill",
+        ].includes(this.fieldDetails.fieldName)
+      ) {
+        isCurrency = true
+      }
+      rawVals.forEach(function (optionKey) {
         let name = optionKey
         let val = optionKey
-        if (this.isCurrencyField) {
+        if (isCurrency) {
           // name = $n(optionKey, "currency", "EUR")
           // don't think I have $i18n setup for above
           name = "€" + optionKey
           // below removes comma
           val = optionKey.replace(/,/g, "")
-        } else if (hasLabels) {
-          // For fields with separate labels (like property types)
-          const labelObj = this.fieldDetails.optionsLabels.find(l => l.value === optionKey)
-          if (labelObj) {
-            name = labelObj.label
-            val = labelObj.value
-          }
         } else {
           if (optionsType === "object_list") {
             // name = _.startCase(optionKey.label)
@@ -110,9 +98,9 @@ export default {
   },
   methods: {
     fieldChangeHandler(selectItem) {
-      const updatedDetails = { ...this.fieldDetails, newValue: selectItem.value }
-      this['$emit']("selectChanged", updatedDetails)
-    }
-  }
+      this.fieldDetails.newValue = selectItem.value
+      this.$emit("selectChanged", this.fieldDetails)
+    },
+  },
 }
 </script>

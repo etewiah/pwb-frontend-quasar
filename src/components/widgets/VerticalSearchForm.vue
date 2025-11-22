@@ -1,5 +1,5 @@
 <template>
-  <div class="vert-search">
+  <div class="vertical-search-form">
     <div class="q-mr-md">
       <span name="search-box-fade">
         <div>
@@ -17,7 +17,7 @@
               <SelectField
                 @selectChanged="triggerSearchUpdate"
                 :fieldDetails="fieldDetails"
-                :currentFieldValue="routeParams[fieldDetails.queryStringName]"
+                :currentFieldValue="currentFilterValues[fieldDetails.queryStringName]"
                 :currentMinPriceValue="currentMinPriceValue"
               ></SelectField>
             </div>
@@ -30,20 +30,37 @@
 <script>
 import SelectField from "components/fields/SelectField.vue"
 import useSearchFields from "src/composables/useSearchFields.js"
+import usePropertyTypes from "src/composables/usePropertyTypes.js"
 import { useRoute } from "vue-router"
+import { watch } from "vue"
+
 export default {
   components: {
     SelectField,
   },
   setup() {
     const { getSearchFields } = useSearchFields()
+    const { propertyTypes } = usePropertyTypes()
     const route = useRoute()
     let saleOrRental = "rental"
     if (route.name === "rForSaleSearch") {
       saleOrRental = "sale"
     }
+    
+    const searchFields = getSearchFields(saleOrRental)
+    
+    // Update property type options when they're loaded
+    watch(propertyTypes, (newTypes) => {
+      const propertyTypeField = searchFields.find(f => f.fieldName === "propertyType")
+      if (propertyTypeField && newTypes.length > 0) {
+        propertyTypeField.optionsValues = newTypes.map(t => t.value)
+        // Store labels for display
+        propertyTypeField.optionsLabels = newTypes
+      }
+    })
+    
     return {
-      searchFields: getSearchFields(saleOrRental),
+      searchFields,
     }
   },
 
@@ -65,6 +82,12 @@ export default {
     },
     isMobileModal: {
       type: Boolean,
+    },
+    currentFilterValues: {
+      type: Object,
+      default() {
+        return {}
+      }
     },
   },
   methods: {
@@ -94,7 +117,8 @@ export default {
   data: () => ({
     newCurrentMinPriceValue: null,
   }),
-  mounted: function () {},
+  mounted() {
+  },
 }
 </script>
 <style scoped></style>

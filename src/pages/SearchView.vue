@@ -1,4 +1,5 @@
 <template>
+  <q-page>
   <div class="q-ma-md">
     <h3 class="text-center">
       {{ localiseProvider.$ft(searchHeaderText) }}
@@ -32,6 +33,7 @@
       </div>
     </div>
   </div>
+  </q-page>
 </template>
 <script>
 import ListingsSummaryCard from "components/cards/ListingsSummaryCard.vue"
@@ -158,7 +160,7 @@ export default defineComponent({
         query.bedrooms_min = bedroomsFrom.value
       }
       if (bathroomsFrom.value !== "none" && bathroomsFrom.value && bathroomsFrom.value !== "0") {
-        query.bathrooms_min = bathroomsFrom.value
+        query.bedrooms_min = bathroomsFrom.value
       }
       if (propertyType.value !== "none" && propertyType.value) {
         query.property_type = propertyType.value

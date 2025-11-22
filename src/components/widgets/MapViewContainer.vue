@@ -1,6 +1,4 @@
 <template>
-<!-- eslint-disable vue/no-side-effects-in-computed-properties -->
-  /* eslint-disable vue/no-side-effects-in-computed-properties */
   <div>
     <div
       class="map-regular-section"
@@ -41,8 +39,7 @@
 </template>
 <script>
 import { ref, onMounted } from "vue"
-//import {setupContainsLatLng} from '../util/is-point-within-polygon.js'
-import useGoogleMaps from "~/v-admin-app/src/compose/useGoogleMaps.js"
+import useGoogleMaps from "src/composables/useGoogleMaps.js"
 export default {
   setup(props) {
     const { getAddressFromPlaceDetails } = useGoogleMaps()

@@ -25,22 +25,6 @@
             />
           </div>
         </template>
-        <!-- <q-toggle v-model="acceptTerms">
-              <a v-on:click.stop class="" :href="tAndCLink">
-                <span>
-                  {{
-                    localiseProvider.$ft("standard.forms.tAndCAcceptancePrefix")
-                  }}
-                </span>
-                <span class="acceptance-link color-primary">
-                  {{
-                    localiseProvider.$ft(
-                      "standard.forms.tAndCAcceptanceLinkText"
-                    )
-                  }}
-                </span> </a
-              >.
-            </q-toggle> -->
         <div class="q-mt-lg">
           <q-btn
             :label="localiseProvider.$ft('send')"
@@ -69,21 +53,14 @@
   </q-card>
 </template>
 <script>
-import { useMutation } from "@urql/vue"
+import axios from "axios"
 import { ref } from "vue"
+
 export default {
   inject: ["localiseProvider"],
   setup() {
     const acceptTerms = ref(false)
-    const submitEnquiryResult = useMutation(`
-      mutation ($propertyId: String!, $contact: JSON!) {
-        submitListingEnquiry (
-          input: { propertyId: $propertyId, contact: $contact }
-        )
-      }
-    `)
     return {
-      submitEnquiryResult,
       acceptTerms,
       onReset() {
         acceptTerms.value = false
@@ -95,23 +72,33 @@ export default {
       let propertyId = this.currentListing.id
       let contact = this.enquiryContent.contact
       propertyId = propertyId.toString() || ""
-      const variables = { propertyId, contact: contact || contact }
-      this.submitEnquiryResult.executeMutation(variables).then((result) => {
-        // console.log(result)
-        if (result.error && result.error.message) {
-          this.propertyEnquiryErrors.push(result.error.message)
-        } else {
+      
+      // Construct payload for REST API
+      const payload = {
+        listing_enquiry: {
+          property_id: propertyId,
+          ...contact
+        }
+      }
+
+      axios.post('/api_public/v1/enquiries', payload)
+        .then((response) => {
           this.$q.notify({
             color: "green-4",
             textColor: "white",
             icon: "cloud_done",
             message: "Thank you for your enquiry",
           })
-        }
-        // The result is almost identical to `submitEnquiryResult` with the exception
-        // of `result.fetching` not being set and its properties not being reactive.
-        // It is an OperationResult.
-      })
+          // Reset form or handle success state
+        })
+        .catch((error) => {
+          console.error(error)
+          let errorMessage = "An error occurred"
+          if (error.response && error.response.data && error.response.data.error) {
+            errorMessage = error.response.data.error
+          }
+          this.propertyEnquiryErrors.push(errorMessage)
+        })
     },
   },
   props: {
@@ -122,12 +109,6 @@ export default {
   },
   data() {
     return {
-      // acceptTerms: false,
-      // ask_types: ["Ask for more information", "Ask for a visit", "Ask to be called back",
-      //   "Ask for more photos"
-      // ],
-      // promptTandC: false,
-      // tandcAccepted: true,
       propertyEnquiryErrors: [],
       formValid: false,
       propertyEnquiryShortFields: [
@@ -164,23 +145,9 @@ export default {
           pref_lang: "",
           ask_type: "",
           name: "",
-          // message: "Hi, I'm interested in your property and I want more information about it. Thanks.."
         },
       },
     }
-  },
-  computed: {
-    // tAndCLink() {
-    //   let tAndCLink = ""
-    //   return tAndCLink
-    // },
-  },
-  watch: {
-    // tandcAccepted(newValue, oldValue) {
-    //   if (newValue === true) {
-    //     this.promptTandC = false
-    //   }
-    // },
   },
 }
 </script>
