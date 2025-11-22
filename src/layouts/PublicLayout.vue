@@ -2,13 +2,13 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <div
-        class="row q-toolbar"
+        class="row q-toolbar pwb-header-top-bar"
         style="min-height: 10px; border-bottom: 1px solid white"
       >
-        <div class="col-md-12">
+        <div class="col-12">
           <div class="aa-header-area max-ctr">
             <div class="row">
-              <div class="col-md-6 col-sm-6 col-xs-6">
+              <div class="col-6 col-sm-6 col-xs-6 pwb-header-left">
                 <div class="aa-header-left">
                   <div class="aa-telephone-no float-left">
                     <q-icon
@@ -32,7 +32,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 col-sm-6 col-xs-6">
+              <div class="col-6 col-sm-6 col-xs-6 pwb-header-right">
                 <div class="aa-header-right">
                   <div class="contenedor_idiomas" style="">
                     <ul class="idiomas">
@@ -92,13 +92,28 @@
   </q-layout>
 </template>
 <script>
-import { defineComponent } from "vue"
+import { defineComponent, ref, watch } from "vue"
+import { useRoute } from "vue-router"
+import axios from "axios"
 import PwbFooter from "components/widgets/PwbFooter.vue"
 
 export default defineComponent({
   name: "PublicLayout",
   inject: ["localiseProvider", "sitedetailsProvider"],
   components: { PwbFooter },
+  setup() {
+    const route = useRoute()
+    const publicLocale = ref(route.params.publicLocale)
+    const loading = ref(false)
+    const error = ref(null)
+
+    return {
+      publicLocale,
+      loading,
+      error,
+      route
+    }
+  },
   computed: {
     langNavs() {
       let supportedLocales =
@@ -121,5 +136,59 @@ export default defineComponent({
       return this.sitedetailsProvider.state.topNavLinkItems
     },
   },
+  watch: {
+    'route.params.publicLocale': {
+      handler(newLocale) {
+        if (newLocale) {
+          this.fetchData(newLocale)
+        }
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    async fetchData(locale) {
+      if (!locale) return
+      this.loading = true
+      this.error = null
+      try {
+        const [siteDetailsRes, translationsRes] = await Promise.all([
+          axios.get('/api_public/v1/site_details', { params: { locale } }),
+          axios.get('/api_public/v1/translations', { params: { locale } })
+        ])
+
+        const siteDetails = siteDetailsRes.data
+        const translations = translationsRes.data
+
+        this.localiseProvider.setLocaleMessages(
+          translations.result,
+          translations.locale
+        )
+
+        let topNavDisplayLinks = siteDetails.top_nav_display_links || []
+        this.sitedetailsProvider.setTopNavItems(
+          locale,
+          topNavDisplayLinks
+        )
+
+        let footerDisplayLinks = siteDetails.footer_display_links || []
+        this.sitedetailsProvider.setFooterNavItems(
+          locale,
+          footerDisplayLinks
+        )
+
+        this.sitedetailsProvider.setAgency(
+          siteDetails.agency,
+          siteDetails.supported_locales
+        )
+
+      } catch (err) {
+        this.error = err
+        console.error("Error fetching data:", err)
+      } finally {
+        this.loading = false
+      }
+    }
+  }
 })
 </script>

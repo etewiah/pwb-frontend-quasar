@@ -7,7 +7,7 @@
 // export function useI18n() {
 //   const i18n = inject(i18nSymbol);
 //   if (!i18n) throw new Error("No i18n provided!!!");
-
+// 
 //   return i18n;
 // }
 
@@ -45,7 +45,7 @@ function $ft(key) {
       .split('.')
       .filter(s => s)
       .reduce((acc, val) => acc && acc[val], obj)
-  return deep_value(this.state.localeMessages[this.state.locale], key)
+  return deep_value(this.state.localeMessages[this.state.locale], key) || key
   // return this.state.localeMessages[this.state.locale][key];
 }
 

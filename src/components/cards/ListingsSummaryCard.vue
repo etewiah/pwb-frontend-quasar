@@ -31,12 +31,45 @@
             >
               <!-- <q-item-label overline>OVERLINE</q-item-label> -->
               <q-item-label>{{ currentListing.title }}</q-item-label>
-              <q-item-label caption>
-                <ConvertableCurrencyDisplay
-                  :priceInCents="priceInCents"
-                  :originalCurrency="currentListing.currency || 'GBP'"
-                ></ConvertableCurrencyDisplay>
-              </q-item-label>
+              <q-card class="my-card pwb-listing-card" flat bordered>
+    <div class="row no-wrap">
+      <div class="col-12">
+        <q-img
+          :src="summaryImageUrl"
+          :ratio="16 / 9"
+          class="cursor-pointer pwb-listing-card-image"
+          @click="clickedListing"
+        >
+          <div class="absolute-bottom text-subtitle2 text-center">
+            {{ currentListing.title }}
+          </div>
+        </q-img>
+      </div>
+    </div>
+    <q-card-section class="pwb-listing-card-details">
+      <div class="row items-center no-wrap">
+        <div class="col">
+          <div class="text-h6">
+            <ConvertableCurrencyDisplay
+              :currency="currentListing.currency"
+              :amountCents="priceInCents"
+            ></ConvertableCurrencyDisplay>
+          </div>
+        </div>
+      </div>
+      <div class="row items-center no-wrap q-mt-sm">
+        <div class="col-6">
+          <q-icon name="bed" /> {{ currentListing.countBedrooms }}
+        </div>
+        <div class="col-6">
+          <q-icon name="bathtub" /> {{ currentListing.countBathrooms }}
+        </div>
+      </div>
+    </q-card-section>
+    <q-card-actions align="right">
+      <q-btn flat color="primary" label="View" @click="clickedListing" />
+    </q-card-actions>
+  </q-card>
             </router-link>
           </q-item-section>
         </div>

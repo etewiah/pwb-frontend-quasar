@@ -1,41 +1,64 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
-  },
-  {
-    path: '/en',
     component: () => import('layouts/PublicLayout.vue'),
     children: [
       {
-        path: 'for-sale',
-        name: 'rForSaleSearch',
-        component: () => import('pages/SearchView.vue')
+        path: '',
+        name: 'rDefaultLocaleHomePage',
+        component: () => import("components/PageContainer.vue"),
       },
       {
-        path: 'for-sale/:listingSlug',
-        name: 'rForSaleListing',
-        component: () => import('pages/ListingView.vue')
+        path: '/:publicLocale',
+        name: 'rLocaleHome',
+        component: () => import("components/EmptyContainer.vue"),
+        children: [
+          {
+            path: '',
+            name: 'rLocaleHomePage',
+            component: () => import("components/PageContainer.vue"),
+          },
+          {
+            path: 'p/:pageSlug',
+            name: "rPublicPage",
+            component: () => import("components/PageContainer.vue"),
+          },
+          {
+            path: 'contact-us',
+            name: "rContactUs",
+            component: () => import("pages/SearchView.vue"),
+          },
+          {
+            path: 'for-sale',
+            name: "rForSaleSearch",
+            component: () => import("pages/SearchView.vue"),
+          },
+          {
+            path: 'for-sale/:listingSlug',
+            name: "rForSaleListing",
+            component: () => import("pages/ListingView.vue"),
+          },
+          {
+            path: 'for-rent',
+            name: "rForRentSearch",
+            component: () => import("pages/SearchView.vue"),
+          },
+          {
+            path: 'for-rent/:listingSlug',
+            name: "rForRentListing",
+            component: () => import("pages/ListingView.vue"),
+          },
+        ]
       },
-      {
-        path: 'for-rent',
-        name: 'rForRentSearch',
-        component: () => import('pages/SearchView.vue')
-      },
-      {
-        path: 'for-rent/:listingSlug',
-        name: 'rForRentListing',
-        component: () => import('pages/ListingView.vue')
-      }
     ]
   },
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
+
+  // // Always leave this as last one,
+  // // but you can also remove it
+  // {
+  //   path: "/:catchAll(.*)*",
+  //   component: () => import("pages/Error404.vue"),
+  // },
 ]
 
 export default routes

@@ -7,26 +7,28 @@
     <div v-for="pageContent in pageContents" :key="pageContent.id">
       <div v-html="pageContent"></div>
     </div>
-    <div class="row q-col-gutter-md">
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <h6>
-          {{ localiseProvider.$ft("searchForProperties") }}
-        </h6>
-        <VerticalSearchForm
-          @triggerSearchUpdate="triggerSearchUpdate"
-          :currentFilterValues="currentFilterValues"
-        ></VerticalSearchForm>
+    <div class="row pwb-search-container">
+      <div class="col-12 col-md-4 col-lg-3 pwb-search-sidebar">
+        <div class="q-pa-md">
+          <h5 class="text-h5 q-mb-md">
+            {{ localiseProvider.$ft(searchHeaderText) }}
+          </h5>
+          <VerticalSearchForm
+            @search-update="triggerSearchUpdate"
+            :initial-values="currentFilterValues"
+          ></VerticalSearchForm>
+        </div>
       </div>
-      <div class="col-sm-12 col-md-8 col-lg-9">
-        <div class="row q-col-gutter-md">
+      <div class="col-12 col-md-8 col-lg-9 pwb-search-results">
+        <div class="row">
           <div
-            class="col-sm-6 col-md-4"
-            v-for="property in properties"
-            :key="property.id"
+            class="col-12 col-md-4 pwb-listing-card-wrapper"
+            v-for="listing in listings"
+            :key="listing.id"
           >
             <ListingsSummaryCard
               :saleOrRental="saleOrRental"
-              :currentListing="property"
+              :currentListing="listing"
             ></ListingsSummaryCard>
           </div>
         </div>
@@ -203,7 +205,7 @@ export default defineComponent({
         return "forRent"
       }
     },
-    properties() {
+    listings() {
       return this.propertiesData
     },
     pageContents() {

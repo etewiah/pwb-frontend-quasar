@@ -5,16 +5,37 @@
         {{ currentListing.title }}
       </h3>
     </div>
-    <div class="col-sm-12 col-md-9">
-      <div v-scroll="onScroll" class="">
-        <ListingCarousel
-          :showThumbnails="listingScrolled"
-          :currentListing="currentListing"
-        ></ListingCarousel>
+    <div class="col-12 col-md-9 pwb-listing-main-content">
+      <ListingCarousel :propPhotos="currentListing.propPhotos"></ListingCarousel>
+      <div class="q-pa-md">
+        <div class="text-h5 q-mb-md">
+          {{ currentListing.title }}
+        </div>
+        <div class="text-subtitle1 q-mb-md">
+          <ConvertableCurrencyDisplay
+            :currency="currentListing.currency"
+            :amountCents="currentListing.priceSaleCurrentCents"
+          ></ConvertableCurrencyDisplay>
+        </div>
+        <div class="q-mb-md">
+          {{ currentListing.description }}
+        </div>
+        <div class="q-mb-md">
+          <div class="row q-col-gutter-md">
+            <div class="col-6 col-md-4">
+              <q-icon name="bed" /> {{ currentListing.countBedrooms }}
+            </div>
+            <div class="col-6 col-md-4">
+              <q-icon name="bathtub" /> {{ currentListing.countBathrooms }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-3">
-      <ListingEnquiry :currentListing="currentListing"></ListingEnquiry>
+    <div class="col-12 col-md-3 pwb-listing-sidebar">
+      <div class="q-pa-md">
+        <ListingEnquiry :currentListing="currentListing"></ListingEnquiry>
+      </div>
     </div>
     <div class="col-sm-12">
       <div class="text-h6">
