@@ -1,16 +1,17 @@
 module.exports = {
-  // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
+  // https://eslint.org/docs/user-guide/configuring\#configuration-cascading-and-hierarchy
   // This option interrupts the configuration hierarchy at this file
   // Remove this if you have an higher level ESLint config file (it usually happens into a monorepos)
   root: true,
 
   parserOptions: {
-    ecmaVersion: 2021, // Allows for the parsing of modern ECMAScript features
+    ecmaVersion: '2021', // Allows for the parsing of modern ECMAScript features
   },
 
   env: {
     node: true,
-    browser: true
+    browser: true,
+    'vue/setup-compiler-macros': true
   },
 
   // Rules order is important, please avoid shuffling them
@@ -20,25 +21,20 @@ module.exports = {
 
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
-    // See https://eslint.vuejs.org/rules/#available-rules
+    // See https://eslint.vuejs.org/rules/\#available-rules
     'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/vue3-strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
     // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
-    // https://github.com/prettier/eslint-config-prettier#installation
-    // usage with Prettier, provided by 'eslint-config-prettier'.
-    'prettier'
+    'standard'
+
   ],
 
   plugins: [
-    // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
+    // https://eslint.vuejs.org/user-guide/\#why-doesn-t-it-work-on-vue-files
     // required to lint *.vue files
-    'vue',
-    
-    // https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
-    // Prettier has not been included as plugin to avoid performance impact
-    // add it as an extension for your IDE
-    
+    'vue'
+  
   ],
 
   globals: {
@@ -56,7 +52,26 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-    
+    'vue/no-side-effects-in-computed-properties': 'off',
+    'vue/no-mutating-props': 'off',
+
+    // allow async-await
+    'generator-star-spacing': 'off',
+    // allow paren-less arrow functions
+    'arrow-parens': 'off',
+    'one-var': 'off',
+    'no-void': 'off',
+    'multiline-ternary': 'off',
+
+    'import/first': 'off',
+    'import/named': 'error',
+    'import/namespace': 'error',
+    'import/default': 'error',
+    'import/export': 'error',
+    'import/extensions': 'off',
+    'import/no-unresolved': 'off',
+    'import/no-extraneous-dependencies': 'off',
+
     'prefer-promise-reject-errors': 'off',
 
     // allow debugger during development only

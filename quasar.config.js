@@ -20,7 +20,7 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
+    boot: ['axios', 'localise',
       
       
     ],
@@ -47,6 +47,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       target: {
+      eslint: { warnings: false, errors: false },
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
         node: 'node20'
       },
@@ -72,8 +73,6 @@ module.exports = configure(function (/* ctx */) {
 
       vitePlugins: [
         ['vite-plugin-checker', {
-          eslint: {
-            lintCommand: 'eslint "./**/*.{js,mjs,cjs,vue}"'
           }
         }, { server: false }]
       ]
@@ -82,7 +81,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true // opens browser window automatically
+      open: true, proxy: { '/api_public': { target: 'http://localhost:3000', changeOrigin: true } }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
