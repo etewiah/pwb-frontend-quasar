@@ -75,7 +75,10 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true, proxy: { '/api_public': { target: 'http://localhost:3000', changeOrigin: true } }
+      open: true, proxy: {
+        '/api_public': { target: 'http://localhost:3000', changeOrigin: true },
+        '/uploads': { target: 'http://localhost:3000', changeOrigin: true }
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

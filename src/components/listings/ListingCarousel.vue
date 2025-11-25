@@ -76,9 +76,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    currentListing: {
-      type: Object,
-      default: () => {},
+    propPhotos: {
+      type: Array,
+      default: () => [],
     },
   },
   watch: {
@@ -94,7 +94,7 @@ export default {
   computed: {
     carouselSlides() {
       var carouselSlides = []
-      var picsColl = this.currentListing.propPhotos || []
+      var picsColl = this.propPhotos || []
       picsColl.forEach(function (picObject, index) {
         let imageUrl = picObject.image
         if (imageUrl[0] === "/") {

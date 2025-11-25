@@ -68,7 +68,6 @@ function setNavItems(publicLocale, navLinks) {
       linkWithRoute.route = {
         name: "rLocaleHomePage",
         params: {
-          pageSlug: linkPathParams,
           publicLocale: publicLocale,
         },
       }
