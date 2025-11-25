@@ -53,7 +53,31 @@ export default defineComponent({
         const response = await axios.get(`/api_public/v1/properties/${listingSlug}`, {
           params: { locale }
         })
-        listingData.value = response.data
+        
+        // Transform snake_case API response to camelCase
+        const prop = response.data
+        listingData.value = {
+          id: prop.id,
+          title: prop.title,
+          description: prop.description,
+          reference: prop.reference,
+          countBedrooms: prop.count_bedrooms,
+          countBathrooms: prop.count_bathrooms,
+          countGarages: prop.count_garages,
+          constructedArea: prop.constructed_area,
+          plotArea: prop.plot_area,
+          priceSaleCurrentCents: prop.price_sale_current_cents,
+          priceRentalMonthlyCurrentCents: prop.price_rental_monthly_current_cents,
+          currency: prop.currency || prop.price_sale_current_currency,
+          propTypeKey: prop.prop_type_key,
+          forSale: prop.for_sale,
+          forRentLongTerm: prop.for_rent_long_term,
+          forRentShortTerm: prop.for_rent_short_term,
+          propPhotos: prop.prop_photos || [],
+          extrasForDisplay: prop.extras_for_display || [],
+          latitude: prop.latitude,
+          longitude: prop.longitude,
+        }
       } catch (err) {
         error.value = err
         console.error("Error fetching property:", err)

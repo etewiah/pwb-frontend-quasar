@@ -20,13 +20,51 @@
         <div class="q-mb-md">
           {{ currentListing.description }}
         </div>
+        
+        <!-- Property Details Table -->
+        <div class="q-mb-md">
+          <h5 class="text-h6 q-mb-sm">{{ localiseProvider.$ft("property.details") }}</h5>
+          <q-markup-table flat bordered class="property-details-table">
+            <tbody>
+              <tr v-if="currentListing.reference">
+                <td class="text-weight-bold">{{ localiseProvider.$ft("property.ref") }}:</td>
+                <td>{{ currentListing.reference }}</td>
+              </tr>
+              <tr>
+                <td class="text-weight-bold">{{ localiseProvider.$ft("property.price") }}:</td>
+                <td>
+                  <ConvertableCurrencyDisplay
+                    :currency="currentListing.currency"
+                    :amountCents="currentListing.priceSaleCurrentCents"
+                  ></ConvertableCurrencyDisplay>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-weight-bold">{{ localiseProvider.$ft("property.operationType") }}:</td>
+                <td>{{ operationType }}</td>
+              </tr>
+              <tr v-if="currentListing.propTypeKey">
+                <td class="text-weight-bold">{{ localiseProvider.$ft("property.propertyType") }}:</td>
+                <td>{{ localiseProvider.$ft(currentListing.propTypeKey) }}</td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+        </div>
+        
+        <!-- Property Features -->
         <div class="q-mb-md">
           <div class="row q-col-gutter-md">
-            <div class="col-6 col-md-4">
-              <q-icon name="bed" /> {{ currentListing.countBedrooms }}
+            <div class="col-6 col-md-3">
+              <q-icon name="bed" /> {{ currentListing.countBedrooms }} Bedrooms
             </div>
-            <div class="col-6 col-md-4">
-              <q-icon name="bathtub" /> {{ currentListing.countBathrooms }}
+            <div class="col-6 col-md-3">
+              <q-icon name="bathtub" /> {{ currentListing.countBathrooms }} Bathrooms
+            </div>
+            <div class="col-6 col-md-3" v-if="currentListing.constructedArea">
+              <q-icon name="aspect_ratio" /> {{ currentListing.constructedArea }} m²
+            </div>
+            <div class="col-6 col-md-3" v-if="currentListing.countGarages">
+              <q-icon name="garage" /> {{ currentListing.countGarages }} Garages
             </div>
           </div>
         </div>
@@ -190,12 +228,20 @@ export default {
     //   },
     // },
   },
+  inject: ["localiseProvider"],
   computed: {
     priceInCents() {
       if (this.$route.name === "rForRentListing") {
         return this.currentListing.priceRentalMonthlyCurrentCents
       } else {
         return this.currentListing.priceSaleCurrentCents
+      }
+    },
+    operationType() {
+      if (this.$route.name === "rForRentListing") {
+        return this.localiseProvider.$ft("forRent")
+      } else {
+        return this.localiseProvider.$ft("forSale")
       }
     },
     // carouselSlides() {},

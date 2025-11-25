@@ -15,13 +15,24 @@
         >
           <div class="listing-enq-field">
             <q-input
+              v-if="field.inputType !== 'textarea'"
               class="listing-enq-field-input"
               outlined
               v-model="enquiryContent.contact[field.fieldName]"
               :label="localiseProvider.$ft(field.labelTextTKey)"
-              :hint="localiseProvider.$ft(field.hintTextTKey)"
               lazy-rules
               :rules="field.validationRules"
+            />
+            <q-input
+              v-else
+              class="listing-enq-field-input"
+              outlined
+              type="textarea"
+              v-model="enquiryContent.contact[field.fieldName]"
+              :label="localiseProvider.$ft(field.labelTextTKey)"
+              lazy-rules
+              :rules="field.validationRules"
+              :rows="4"
             />
           </div>
         </template>
@@ -114,14 +125,12 @@ export default {
       propertyEnquiryShortFields: [
         {
           labelTextTKey: "name",
-          hintTextTKey: "standard.forms.nameHint",
           fieldName: "name",
           inputType: "text",
           validationRules: [(v) => !!v || "Name is required"],
         },
         {
           labelTextTKey: "email",
-          hintTextTKey: "standard.forms.emailHint",
           fieldName: "email",
           inputType: "text",
           required: true,
@@ -134,9 +143,14 @@ export default {
         },
         {
           labelTextTKey: "tel",
-          hintTextTKey: "standard.forms.telHint",
           fieldName: "tel",
           inputType: "text",
+          validationRules: [],
+        },
+        {
+          labelTextTKey: "message",
+          fieldName: "message",
+          inputType: "textarea",
           validationRules: [],
         },
       ],
