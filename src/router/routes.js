@@ -5,8 +5,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'rDefaultLocaleHomePage',
-        component: () => import("components/PageContainer.vue"),
+        redirect: '/en',
       },
       {
         path: '/:publicLocale',
