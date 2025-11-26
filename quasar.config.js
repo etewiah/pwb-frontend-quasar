@@ -10,6 +10,21 @@
 
 
 const { configure } = require('quasar/wrappers');
+const fs = require('fs');
+const path = require('path');
+
+let backendUrl = 'http://localhost:3000';
+try {
+  const configPath = path.resolve(__dirname, 'app-config.json');
+  if (fs.existsSync(configPath)) {
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    if (config.backendUrl) {
+      backendUrl = config.backendUrl;
+    }
+  }
+} catch (e) {
+  console.warn('Could not read app-config.json, using default backend URL');
+}
 
 
 module.exports = configure(function (/* ctx */) {
@@ -76,8 +91,8 @@ module.exports = configure(function (/* ctx */) {
     devServer: {
       // https: true
       open: true, proxy: {
-        '/api_public': { target: 'http://localhost:3000', changeOrigin: true },
-        '/uploads': { target: 'http://localhost:3000', changeOrigin: true }
+        '/api_public': { target: backendUrl, changeOrigin: true },
+        '/uploads': { target: backendUrl, changeOrigin: true }
       }
     },
 
