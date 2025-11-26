@@ -25,7 +25,7 @@ const routes = [
           {
             path: 'contact-us',
             name: "rContactUs",
-            component: () => import("pages/SearchView.vue"),
+            component: () => import("pages/ContactPage.vue"),
           },
           {
             path: 'for-sale',
