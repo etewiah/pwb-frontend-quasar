@@ -5,54 +5,72 @@
       v-if="listingMapMarkers.length > 0"
       style="height: 900px"
     >
-      <q-no-ssr>
-        <GMapMap
-          :center="mapCenter"
-          :zoom="15"
-          map-type-id="roadmap"
-          style="height: 900px"
-          ref="myMapRef"
-          :click="true"
-          @click="handleMapClick"
+      <l-map
+        ref="map"
+        v-model:zoom="zoom"
+        :center="mapCenter"
+        style="height: 900px"
+        @click="handleMapClick"
+      >
+        <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          layer-type="base"
+          name="OpenStreetMap"
+        ></l-tile-layer>
+        
+        <l-marker
+          v-for="(m, index) in listingMapMarkers"
+          :key="index"
+          :lat-lng="m.position"
+          :draggable="isMapDraggable"
+          @click="openMarker(m.id)"
         >
-          <GMapMarker
-            :icon="listingMarkerIcon"
-            :key="index"
-            v-for="(m, index) in listingMapMarkers"
-            :position="m.position"
-            :clickable="true"
-            :draggable="isMapDraggable"
-            @click="openMarker(m.id)"
-          >
-            <GMapInfoWindow
-              :closeclick="true"
-              @closeclick="closeMarker(m.id)"
-              :opened="openedMarkerIds[m.id] === 1"
-            >
-              <div>{{ m.infoWindowText }}</div>
-            </GMapInfoWindow>
-          </GMapMarker>
-        </GMapMap>
-      </q-no-ssr>
+          <l-icon
+            :icon-url="markerIconUrl"
+            :icon-size="[40, 40]"
+            :icon-anchor="[20, 40]"
+          ></l-icon>
+          <l-popup v-if="openedMarkerIds[m.id] === 1">
+            <div>{{ m.infoWindowText }}</div>
+          </l-popup>
+        </l-marker>
+      </l-map>
     </div>
   </div>
 </template>
+
 <script>
-import { ref, onMounted } from "vue"
-import useGoogleMaps from "src/composables/useGoogleMaps.js"
+import { ref, computed } from "vue"
+import "leaflet/dist/leaflet.css"
+import L from "leaflet"
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LIcon,
+} from "@vue-leaflet/vue-leaflet"
+
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconRetina from 'leaflet/dist/images/marker-icon-2x.png'
+import shadow from 'leaflet/dist/images/marker-shadow.png'
+
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: iconRetina,
+  iconUrl: icon,
+  shadowUrl: shadow
+})
+
 export default {
-  setup(props) {
-    const { getAddressFromPlaceDetails } = useGoogleMaps()
-    // const myMapRef = ref()
-    // const mapPolygon = ref()
-    onMounted(() => {
-      // myMapRef.value.$mapPromise.then(() => {
-      //   // setupContainsLatLng()
-      // })
-    })
-    return {
-      getAddressFromPlaceDetails,
-    }
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+    LPopup,
+    LIcon,
   },
   props: {
     singleLatLngDetails: {
@@ -60,27 +78,30 @@ export default {
       default: () => {},
     },
   },
+  setup(props) {
+    const zoom = ref(15)
+    const map = ref(null)
+
+    return {
+      zoom,
+      map,
+    }
+  },
   data() {
     return {
       openedMarkerIds: {},
-      listingMarkerIcon: {
-        url: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
-        scaledSize: { width: 40, height: 40 },
-        labelOrigin: { x: 0, y: 0 },
-      },
+      markerIconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
     }
   },
-  watch: {},
   computed: {
     isMapDraggable() {
       return true
     },
     mapCenter() {
-      let mapCenter = { lat: 0, lng: 9 }
       if (this.listingMapMarkers[0] && this.listingMapMarkers[0].position) {
-        mapCenter = this.listingMapMarkers[0].position
+        return this.listingMapMarkers[0].position
       }
-      return mapCenter
+      return [0, 9]
     },
     listingMapMarkers() {
       let listingMapMarkers = []
@@ -88,68 +109,26 @@ export default {
         this.singleLatLngDetails.latitude &&
         this.singleLatLngDetails.longitude
       ) {
-        let infoWindowText = this.singleLatLngDetails.streetAddress
+        let infoWindowText = this.singleLatLngDetails.streetAddress || this.singleLatLngDetails.title || "Property Location"
         listingMapMarkers.push({
           id: this.singleLatLngDetails.id,
-          position: {
-            lat: parseFloat(this.singleLatLngDetails.latitude),
-            lng: parseFloat(this.singleLatLngDetails.longitude),
-          },
+          position: [
+            parseFloat(this.singleLatLngDetails.latitude),
+            parseFloat(this.singleLatLngDetails.longitude),
+          ],
           infoWindowText: infoWindowText,
         })
-        // below ensures that info window for each marker is opened
+        // Auto-open the popup for the marker
         this.openedMarkerIds[this.singleLatLngDetails.id] = 1
       }
       return listingMapMarkers
     },
   },
   methods: {
-    // below not currently used
-    handleMapClick(gLocation) {
-      let newAddressDetails = {}
-      if (gLocation.latLng?.lat) {
-        var geocoder = new google.maps.Geocoder()
-        var that = this
-        let gPlace = {}
-        geocoder.geocode(
-          {
-            latLng: gLocation.latLng,
-          },
-          function (results, status) {
-            let errorMessage = false
-            if (status === google.maps.GeocoderStatus.OK) {
-              if (results[0]) {
-                gPlace = results[0]
-                newAddressDetails = that.getAddressFromPlaceDetails(gPlace)
-
-                that.$emit("setFieldsFromAddressDetails", newAddressDetails)
-              } else {
-                errorMessage = "No results found"
-              }
-            } else {
-              errorMessage = "Geocoder failed due to: " + status
-            }
-            if (errorMessage) {
-              this.$q.notify({
-                color: "red-4",
-                textColor: "white",
-                icon: "error",
-                message: errorMessage,
-              })
-            }
-          }
-        )
-        // newAddressDetails = this.getAddressFromPlaceDetails(gPlace)
-        // mapPolygon.value.$polygonPromise.then((res) => {
-        //   let isWithinPolygon = res.containsLatLng(
-        //     gLocation.latLng.lat(),
-        //     gLocation.latLng.lng()
-        //   )
-        //   console.log({ isWithinPolygon })
-        // })
-      }
+    handleMapClick(event) {
+      // Leaflet click handling - can implement reverse geocoding with Nominatim if needed
+      console.log("Map clicked at:", event.latlng)
     },
-
     closeMarker(id) {
       this.openedMarkerIds[id] = 0
     },
@@ -159,3 +138,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Fix for Leaflet marker icons not showing correctly */
+:deep(.leaflet-marker-icon) {
+  margin-left: -20px !important;
+  margin-top: -40px !important;
+}
+</style>
