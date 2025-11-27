@@ -1,0 +1,17 @@
+{
+  "name": "pwb-frontend-quasar",
+  "description": "A Quasar Project",
+  "repository": "https://github.com/etewiah/pwb-frontend-quasar",
+  "logo": "https://cdn.quasar.dev/logo-v2/svg/logo.svg",
+  "keywords": [
+    "node",
+    "express",
+    "quasar",
+    "vue"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
