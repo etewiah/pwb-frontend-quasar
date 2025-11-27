@@ -1,6 +1,8 @@
 # Quasar App (pwb-frontend-quasar)
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/etewiah/pwb-frontend-quasar)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/etewiah/pwb-frontend-quasar)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/etewiah/pwb-frontend-quasar)
 
 A Quasar Project
 
@@ -18,12 +20,8 @@ This application allows you to configure the backend URL without changing the so
     ```
 3.  `app-config.json` is ignored by git, so your local settings won't be committed.
 
-### Production (Netlify)
-When deploying to Netlify, the application will automatically generate the necessary redirect rules to proxy API requests to your backend.
-
-You can configure the backend URL in two ways:
-1.  **Environment Variable**: Set `BACKEND_URL` in your Netlify site settings. This takes precedence.
-2.  **Config File**: If `BACKEND_URL` is not set, the build script will look for `app-config.json` (if you committed it, which is not recommended for secrets) or fall back to `app-config.template.json`.
+### Production
+See [Deployment Documentation](docs/deployment.md).
 
 ## Install the dependencies
 ```bash
